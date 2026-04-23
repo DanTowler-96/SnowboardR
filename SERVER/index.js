@@ -77,6 +77,7 @@ db.close();
 // Parses incoming JSON request bodies
 app.use(express.json());
 
+console.log('Serving static files fron:', path.join(__dirname, '..', 'CLIENT'));
 // Serves the CLIENT folder as static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, '..', 'CLIENT')));
 
