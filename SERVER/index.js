@@ -86,6 +86,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/results', resultsRouter);
 
+app.get('/health', (req, res) => res.send('ok'));
 app.listen(PORT, () => {
     console.log(`SnowboardR server running at http://localhost:${PORT}`);
 });
