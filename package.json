@@ -2,7 +2,7 @@
   "name": "snowboardr",
   "version": "1.0.0",
   "description": "A personalised snowboard recommendation app that matches riders to their ideal board based on physical stats, ability level, riding style, and terrain preferences.",
-  "main": "index.js",
+  "main": "SERVER/index.js",
   "scripts": {
     "start": "node SERVER/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
