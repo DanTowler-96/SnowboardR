@@ -614,6 +614,213 @@ select option { background: var(--surface2); color: var(--text); }
 .affiliate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(74,240,200,0.4); opacity: 0.95; }
 .affiliate-btn svg { flex-shrink: 0; }
 
+/* ── Auth bar ────────────────────────────────────────────── */
+.auth-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.auth-btn {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.auth-btn:hover {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.07);
+}
+
+.auth-status {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.logout-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.78rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.logout-btn:hover {
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── Save button ─────────────────────────────────────────── */
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.save-btn:hover {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.07);
+}
+
+.save-btn.saved {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+/* ── Auth modal ──────────────────────────────────────────── */
+.auth-modal {
+  max-width: 400px;
+  padding: 36px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-bottom: 1.5px solid rgba(255,255,255,0.1);
+}
+
+.auth-tab {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.95rem;
+  font-family: inherit;
+  padding: 8px 20px 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.auth-tab.active {
+  color: #fff;
+}
+
+.auth-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #fff;
+}
+
+.auth-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #fff;
+  color: #0a0a0a;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.auth-submit:hover {
+  opacity: 0.88;
+}
+
+/* ── Saved results panel ─────────────────────────────────── */
+.saved-entry {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.saved-entry-date {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 12px;
+}
+
+.saved-entry-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.saved-tag {
+  background: rgba(255,255,255,0.07);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.6);
+}
+
+.saved-boards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.saved-board-pill {
+  background: rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  color: #fff;
+}
+
+.saved-board-pill span {
+  color: #4ade80;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.saved-results-btn {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.8);
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.saved-results-btn:hover {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.07);
+}
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .app-wrapper { padding: 24px 16px 48px; }

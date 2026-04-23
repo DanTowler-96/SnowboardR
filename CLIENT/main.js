@@ -32,8 +32,27 @@ const modalEl         = document.getElementById('modal');
 const modalContent    = document.getElementById('modal-content');
 const modalClose      = document.getElementById('modal-close');
 
+// ── Auth DOM refs ─────────────────────────────────────────
+const authBtn         = document.getElementById('auth-btn');
+const authStatus      = document.getElementById('auth-status');
+const logoutBtn       = document.getElementById('logout-btn');
+const saveBtn         = document.getElementById('save-btn');
+const savedPanel      = document.getElementById('saved-panel');
+const savedBackBtn    = document.getElementById('saved-back-btn');
+const savedList       = document.getElementById('saved-list');
+const savedSubtitle   = document.getElementById('saved-subtitle');
+const authModalOverlay = document.getElementById('auth-modal-overlay');
+const authModalClose  = document.getElementById('auth-modal-close');
+const authError       = document.getElementById('auth-error');
+const loginForm       = document.getElementById('login-form');
+const registerForm    = document.getElementById('register-form');
+const authTabs        = document.querySelectorAll('.auth-tab');
+const loginSubmit     = document.getElementById('login-submit');
+const registerSubmit  = document.getElementById('register-submit');
+
 // stores full scored result set so filters can re-slice without re-running scoring
 let allResults        = [];
+let currentInputs     = {};
 
 // ── Filter functions ──────────────────────────────────────────
 // derives available brands dynamically from the result set and populates the dropdown
@@ -302,6 +321,7 @@ resultsTitle.textContent = 'YOUR RESULTS';
 
 // Store results and render via filters
 allResults = results;
+currentInputs = userInputs;
 populateBrandFilter(results);
 
 // if no results fall within budget, warn user rather than silently showing over-budget boards
@@ -331,4 +351,212 @@ applyFilters();
     submitBtn.disabled = false;
     submitBtn.querySelector('span').textContent = 'FIND MY BOARD';
   }
+});
+
+// ── Auth state ────────────────────────────────────────────
+let currentToken = localStorage.getItem('sb_token');
+let currentEmail = localStorage.getItem('sb_email');
+
+function updateAuthUI() {
+  if (currentToken) {
+    authBtn.classList.add('hidden');
+    authStatus.textContent = `${currentEmail} - My saves`;
+    authStatus.classList.remove('hidden');
+    logoutBtn.classList.remove('hidden');
+    saveBtn.classList.remove('hidden');
+  } else {
+    authBtn.classList.remove('hidden');
+    authStatus.classList.add('hidden');
+    logoutBtn.classList.add('hidden');
+    saveBtn.classList.add('hidden');
+  }
+}
+
+// Run on page load to restore logged in state
+updateAuthUI();
+
+// ── Auth modal ────────────────────────────────────────────
+authBtn.addEventListener('click', () => {
+  authModalOverlay.classList.remove('hidden');
+});
+
+authModalClose.addEventListener('click', () => {
+  authModalOverlay.classList.add('hidden');
+  authError.classList.add('hidden');
+});
+
+authModalOverlay.addEventListener('click', e => {
+  if (e.target === authModalOverlay) {
+    authModalOverlay.classList.add('hidden');
+    authError.classList.add('hidden');
+  }
+});
+
+// Tab switching
+authTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    authTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    authError.classList.add('hidden');
+    if (tab.dataset.tab === 'login') {
+      loginForm.classList.remove('hidden');
+      registerForm.classList.add('hidden');
+    } else {
+      loginForm.classList.add('hidden');
+      registerForm.classList.remove('hidden');
+    }
+  });
+});
+
+function showAuthError(message) {
+  authError.textContent = message;
+  authError.classList.remove('hidden');
+}
+
+// ── Register ──────────────────────────────────────────────
+registerSubmit.addEventListener('click', async () => {
+  const email = document.getElementById('register-email').value.trim();
+  const password = document.getElementById('register-password').value;
+
+  if (!email || !password) return showAuthError('Please fill in all fields');
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) return showAuthError(data.error);
+
+    currentToken = data.token;
+    currentEmail = data.email;
+    localStorage.setItem('sb_token', currentToken);
+    localStorage.setItem('sb_email', currentEmail);
+    authModalOverlay.classList.add('hidden');
+    updateAuthUI();
+  } catch (err) {
+    showAuthError('Something went wrong, please try again');
+  }
+});
+
+// ── Login ─────────────────────────────────────────────────
+loginSubmit.addEventListener('click', async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) return showAuthError('Please fill in all fields');
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) return showAuthError(data.error);
+
+    currentToken = data.token;
+    currentEmail = data.email;
+    localStorage.setItem('sb_token', currentToken);
+    localStorage.setItem('sb_email', currentEmail);
+    authModalOverlay.classList.add('hidden');
+    updateAuthUI();
+  } catch (err) {
+    showAuthError('Something went wrong, please try again');
+  }
+});
+
+// ── Logout ────────────────────────────────────────────────
+logoutBtn.addEventListener('click', () => {
+  currentToken = null;
+  currentEmail = null;
+  localStorage.removeItem('sb_token');
+  localStorage.removeItem('sb_email');
+  updateAuthUI();
+});
+
+// ── Save results ──────────────────────────────────────────
+saveBtn.addEventListener('click', async () => {
+  if (!currentToken || !allResults.length) return;
+
+  try {
+    const res = await fetch('/api/results', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentToken}`,
+      },
+      body: JSON.stringify({
+        inputs: currentInputs,
+        results: allResults.slice(0, 8).map(r => ({
+          board: { id: r.board.id, brand: r.board.brand, model: r.board.model },
+          pct: r.pct,
+        })),
+      }),
+    });
+
+    if (res.ok) {
+      saveBtn.textContent = '✓ Saved';
+      saveBtn.classList.add('saved');
+      setTimeout(() => {
+        saveBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save results`;
+        saveBtn.classList.remove('saved');
+      }, 2000);
+    }
+  } catch (err) {
+    console.error('Failed to save results:', err);
+  }
+});
+
+// ── Saved results panel ───────────────────────────────────
+authStatus.addEventListener('click', async () => {
+  if (!currentToken) return;
+
+  try {
+    const res = await fetch('/api/results', {
+      headers: { 'Authorization': `Bearer ${currentToken}` },
+    });
+
+    const data = await res.json();
+
+    quizPanel.classList.add('hidden');
+    resultsPanel.classList.add('hidden');
+    savedPanel.classList.remove('hidden');
+
+    if (!data.length) {
+      savedSubtitle.textContent = 'No saved searches yet';
+      savedList.innerHTML = '';
+      return;
+    }
+
+    savedSubtitle.textContent = `${data.length} saved search${data.length > 1 ? 'es' : ''}`;
+
+    savedList.innerHTML = data.map(entry => `
+      <div class="saved-entry">
+        <div class="saved-entry-date">${new Date(entry.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+        <div class="saved-entry-inputs">
+          <span class="saved-tag">${entry.inputs.ability}</span>
+          <span class="saved-tag">${entry.inputs.ridingStyle}</span>
+          <span class="saved-tag">${entry.inputs.preferredFeel}</span>
+          <span class="saved-tag">${entry.inputs.weightKg}kg</span>
+          <span class="saved-tag">${entry.inputs.heightCm}cm</span>
+        </div>
+        <div class="saved-boards">
+          ${entry.results.map(r => `
+            <div class="saved-board-pill">${r.board.brand} ${r.board.model}<span>${r.pct}%</span></div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.error('Failed to load saved results:', err);
+  }
+});
+
+savedBackBtn.addEventListener('click', () => {
+  savedPanel.classList.add('hidden');
+  quizPanel.classList.remove('hidden');
 });

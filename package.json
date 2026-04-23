@@ -1,0 +1,29 @@
+{
+  "name": "snowboardr",
+  "version": "1.0.0",
+  "description": "A personalised snowboard recommendation app that matches riders to their ideal board based on physical stats, ability level, riding style, and terrain preferences.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node SERVER/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanTowler-96/SnowboardR.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DanTowler-96/SnowboardR/issues"
+  },
+  "homepage": "https://github.com/DanTowler-96/SnowboardR#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.9.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

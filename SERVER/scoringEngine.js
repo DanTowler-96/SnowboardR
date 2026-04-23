@@ -216,7 +216,7 @@ function scoreStyleFit(terrainFocus, preferredFeel, boardTags) {
 // used to normalise total into a %
 const MAX_TOTAL = 120;
 
-export function scoreBoard(userInputs, board) {
+function scoreBoard(userInputs, board) {
   const {
     heightCm,
     weightKg,
@@ -270,7 +270,7 @@ export function scoreBoard(userInputs, board) {
 //  filtered out entirely.
 // ─────────────────────────────────────────────────────────────
 
-export function scoreAllBoards(userInputs, boards) {
+function scoreAllBoards(userInputs, boards) {
   return boards
     .map(board => ({ board, ...scoreBoard(userInputs, board) }))
     .filter(result => result.eligible)
@@ -295,7 +295,7 @@ export function scoreAllBoards(userInputs, boards) {
 //  @returns {number|null}      — recommended size in cm, or null if no sizes
 // ─────────────────────────────────────────────────────────────
 
-export function recommendSize(heightCm, weightKg, sizes) {
+function recommendSize(heightCm, weightKg, sizes) {
   if (!Array.isArray(sizes) || sizes.length === 0) return null;
   if (sizes.length === 1) return sizes[0];
 
@@ -350,3 +350,5 @@ export function recommendSize(heightCm, weightKg, sizes) {
 
   return scored[0].size;
 }
+
+module.exports = { scoreAllBoards, recommendSize };
