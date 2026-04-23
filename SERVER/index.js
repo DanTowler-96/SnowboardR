@@ -78,7 +78,7 @@ db.close();
 app.use(express.json());
 
 // Serves the CLIENT folder as static files (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname, '../CLIENT')));
+app.use(express.static(path.join(__dirname, '..', 'CLIENT')));
 
 // ROUTES
 app.use('/api/boards', boardsRouter);
